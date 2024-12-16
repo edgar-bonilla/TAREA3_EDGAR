@@ -3,12 +3,11 @@
     <br><br><br>
     <h1 class="title mb-4">Authors</h1>
 
-    <!-- Botón para mostrar el formulario de creación -->
+ 
     <div class="d-flex justify-content-end mb-4">
       <button class="btn btn-success" @click="showCreateForm">Create Author</button>
     </div>
 
-    <!-- Pestaña para mostrar la tabla de autores -->
     <div v-if="showTab === 'table'">
       <table class="table table-bordered table-hover">
         <thead class="table-dark">
@@ -139,8 +138,8 @@ export default {
   },
   async mounted() {
     try {
-      // Fetch the authors from the backend
-      const response = await fetch('/.netlify/functions/authorFindAll'); 
+   
+      const response = await fetch(`${this.$url}/.netlify/functions/authorFindAll`); 
       this.authors = await response.json();
     } catch (error) {
       console.error("Error fetching authors:", error);
@@ -158,7 +157,7 @@ export default {
       
       this.newAuthor.fields = this.newAuthor.fields.split(',').map(field => field.trim());
       
-      const response = await fetch('/.netlify/functions/authorsInsert', {
+      const response = await fetch(`${this.$url}/.netlify/functions/authorsInsert`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -190,7 +189,7 @@ export default {
 this.editingAuthor.fields = (this.editingAuthor.fields || '').split(',').map(field => field.trim());  // Para el formulario de edición
 
 
-  const response = await fetch(`/.netlify/functions/authorUpdate/${this.editingAuthor.id}`, {
+  const response = await fetch(`${this.$url}/.netlify/functions/authorUpdate/${this.editingAuthor.id}`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
@@ -207,7 +206,7 @@ this.editingAuthor.fields = (this.editingAuthor.fields || '').split(',').map(fie
 },
 
     async deleteAuthor(author) {
-      const response = await fetch(`/.netlify/functions/authorsDelete/${author._id}`, {
+      const response = await fetch(`${this.$url}/.netlify/functions/authorsDelete/${author._id}`, {
         method: 'DELETE',
       });
 

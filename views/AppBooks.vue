@@ -44,7 +44,7 @@
       </table>
     </div>
 
-    <!-- Formulario de creación -->
+
     <div v-if="showTab === 'create'">
       <div class="container py-4 d-flex justify-content-center">
         <div class="card" style="width: 50rem;">
@@ -56,7 +56,7 @@
                 <div class="col-sm-7">
                   <input v-if="key !== 'author' && key !== 'publisher'" v-model="newBook[key]" :id="key" class="form-control" :placeholder="'Enter ' + key" required />
                   
-                  <!-- Selector para Author -->
+              
                   <select v-if="key === 'author'" v-model="newBook[key]" :id="key" class="form-select" required>
                     <option v-for="author in authors" :key="author._id" :value="author._id">{{ author.name }}</option>
                   </select>
@@ -134,9 +134,9 @@ export default {
   },
   async mounted() {
     try {
-      const booksResponse = await fetch('/.netlify/functions/bookFindAll');
-      const authorsResponse = await fetch('/.netlify/functions/authorFindAll');
-      const publishersResponse = await fetch('/.netlify/functions/publishersAll');
+      const booksResponse = await fetch(`${this.$url}/.netlify/functions/bookFindAll`);
+      const authorsResponse = await fetch(`${this.$url}/.netlify/functions/authorFindAll`);
+      const publishersResponse = await fetch(`${this.$url}/.netlify/functions/publishersAll`);
       
       if (booksResponse.ok) {
         this.books = await booksResponse.json();
@@ -161,16 +161,16 @@ export default {
   },
 
   methods: {
-    // Si el autor no existe, no devolver "Unknown"
+   
     getAuthorName(authorId) {
       const author = this.authors.find(a => a._id === authorId);
-      return author ? author.name : '';  // Devolver cadena vacía si no hay autor
+      return author ? author.name : ''; 
     },
 
-    // Si el editor no existe, no devolver un valor por defecto
+
     getPublisherName(publisherId) {
       const publisher = this.publishers.find(p => p._id === publisherId);
-      return publisher ? publisher.name : '';  // Devolver cadena vacía si no hay editor
+      return publisher ? publisher.name : ''; 
     },
 
     showCreateForm() {
@@ -180,7 +180,7 @@ export default {
       this.showTab = 'table';
     },
     async createBook() {
-      const response = await fetch('/.netlify/functions/bookInsert', {
+      const response = await fetch(`${this.$url}/.netlify/functions/bookInsert`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -206,7 +206,7 @@ export default {
     },
     async updateBook() {
       const { _id, ...bookData } = this.editingBook;
-      const response = await fetch(`/.netlify/functions/bookUpdate/${_id}`, {
+      const response = await fetch(`${this.$url}/.netlify/functions/bookUpdate/${_id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -227,7 +227,7 @@ export default {
     },
 
     async deleteBook(book) {
-      const response = await fetch(`/.netlify/functions/bookDelete/${book._id}`, {
+      const response = await fetch(`${this.$url}/.netlify/functions/bookDelete/${book._id}`, {
         method: 'DELETE',
       });
 

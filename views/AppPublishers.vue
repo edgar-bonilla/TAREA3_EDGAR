@@ -3,7 +3,6 @@
     <br><br><br>
     <h1 class="title mb-4">Publishers</h1>
 
-    <!-- Botón para mostrar el formulario de creación -->
     <div v-if="showTab === 'table'">
       <div class="d-flex justify-content-end">
         <button class="btn btn-success mb-4" @click="showCreateForm">Create Publisher</button>
@@ -34,7 +33,6 @@
       </table>
     </div>
 
-    <!-- Tab para crear un nuevo publisher -->
     <div v-if="showTab === 'create'">
       <div class="container py-4 d-flex justify-content-center">
         <div class="card" style="width: 50rem;">
@@ -70,7 +68,6 @@
       </div>
     </div>
 
-    <!-- Tab para editar un publisher -->
     <div v-if="showTab === 'edit' && editingPublisher">
       <div class="container py-4 d-flex justify-content-center">
         <div class="card" style="width: 50rem;">
@@ -124,7 +121,7 @@ export default {
   methods: {
     async fetchPublishers() {
       try {
-        const response = await fetch('/.netlify/functions/publishersAll');
+        const response = await fetch(`${this.$url}/.netlify/functions/publishersAll`);
         if (response.ok) {
           this.publishers = await response.json();
         } else {
@@ -136,7 +133,7 @@ export default {
     },
     async createPublisher() {
       try {
-        const response = await fetch('/.netlify/functions/publishersInsert', {
+        const response = await fetch(`${this.$url}/.netlify/functions/publishersInsert`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(this.newPublisher),
@@ -154,7 +151,7 @@ export default {
     },
     async updatePublisher() {
       try {
-        const response = await fetch(`/.netlify/functions/publishersUpdate/${this.editingPublisher._id}`, {
+        const response = await fetch(`${this.$url}/.netlify/functions/publishersUpdate/${this.editingPublisher._id}`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(this.editingPublisher),
@@ -172,7 +169,7 @@ export default {
     },
     async deletePublisher(publisher) {
       try {
-        const response = await fetch(`/.netlify/functions/publishersDelete/${publisher._id}`, {
+        const response = await fetch(`${this.$url}/.netlify/functions/publishersDelete/${publisher._id}`, {
           method: 'DELETE',
         });
         if (response.ok) {
