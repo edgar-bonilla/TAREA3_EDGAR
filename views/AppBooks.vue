@@ -35,13 +35,15 @@
             <td>{{ getAuthorName(book.author) }}</td>
             <td>{{ getPublisherName(book.publisher) }}</td>
 
-            <td class="action-buttons">
+            <td class="action-buttons d-flex">
               <button class="btn btn-warning btn-sm me-2" @click="editBook(book)">Edit</button>
               <button class="btn btn-danger btn-sm" @click="deleteBook(book)">Delete</button>
             </td>
+
           </tr>
         </tbody>
       </table>
+      <br><br><br>
     </div>
 
 
@@ -54,21 +56,22 @@
               <div v-for="(value, key) in newBook" :key="key" class="mb-3 row">
                 <label :for="key" class="col-sm-2 col-form-label">{{ key }}</label>
                 <div class="col-sm-7">
-                  <input v-if="key !== 'author' && key !== 'publisher'" v-model="newBook[key]" :id="key" class="form-control" :placeholder="'Enter ' + key" required />
-                  
-              
+                  <input v-if="key !== 'author' && key !== 'publisher'" v-model="newBook[key]" :id="key"
+                    class="form-control" :placeholder="'Enter ' + key" required />
+
+
                   <select v-if="key === 'author'" v-model="newBook[key]" :id="key" class="form-select" required>
                     <option v-for="author in authors" :key="author._id" :value="author._id">{{ author.name }}</option>
                   </select>
-                  
-                  <!-- Selector para Publisher -->
+
                   <select v-if="key === 'publisher'" v-model="newBook[key]" :id="key" class="form-select" required>
-                    <option v-for="publisher in publishers" :key="publisher._id" :value="publisher._id">{{ publisher.name }}</option>
+                    <option v-for="publisher in publishers" :key="publisher._id" :value="publisher._id">{{
+                      publisher.name }}</option>
                   </select>
                 </div>
               </div>
               <div class="d-flex">
-                <button type="submit" class="btn btn-primary">Create</button>
+                <button type="submit" class="btn btn-primary me-2">Create</button>
                 <button type="button" class="btn btn-secondary" @click="cancelCreate">Cancel</button>
               </div>
             </form>
@@ -87,16 +90,18 @@
               <div v-for="(value, key) in editingBook" :key="key" class="mb-3 row">
                 <label :for="key" class="col-sm-2 col-form-label">{{ key }}</label>
                 <div class="col-sm-7">
-                  <input v-if="key !== '_id' && key !== 'author' && key !== 'publisher'" v-model="editingBook[key]" :id="key" class="form-control" :placeholder="'Enter ' + key" required />
-                  
+                  <input v-if="key !== '_id' && key !== 'author' && key !== 'publisher'" v-model="editingBook[key]"
+                    :id="key" class="form-control" :placeholder="'Enter ' + key" required />
+
                   <!-- Selector para Author en edición -->
                   <select v-if="key === 'author'" v-model="editingBook[key]" :id="key" class="form-select" required>
                     <option v-for="author in authors" :key="author._id" :value="author._id">{{ author.name }}</option>
                   </select>
-                  
+
                   <!-- Selector para Publisher en edición -->
                   <select v-if="key === 'publisher'" v-model="editingBook[key]" :id="key" class="form-select" required>
-                    <option v-for="publisher in publishers" :key="publisher._id" :value="publisher._id">{{ publisher.name }}</option>
+                    <option v-for="publisher in publishers" :key="publisher._id" :value="publisher._id">{{
+                      publisher.name }}</option>
                   </select>
                 </div>
               </div>
