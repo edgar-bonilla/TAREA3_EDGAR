@@ -161,14 +161,18 @@ export default {
   },
 
   methods: {
+    // Si el autor no existe, no devolver "Unknown"
     getAuthorName(authorId) {
       const author = this.authors.find(a => a._id === authorId);
-      return author ? author.name : 'Unknown';
+      return author ? author.name : '';  // Devolver cadena vacía si no hay autor
     },
+
+    // Si el editor no existe, no devolver un valor por defecto
     getPublisherName(publisherId) {
       const publisher = this.publishers.find(p => p._id === publisherId);
-      return publisher ? publisher.name : 'Unknown';
+      return publisher ? publisher.name : '';  // Devolver cadena vacía si no hay editor
     },
+
     showCreateForm() {
       this.showTab = 'create';
     },
