@@ -89,7 +89,7 @@
                 <div class="col-sm-7">
                   <input v-if="key !== '_id' && key !== 'author' && key !== 'publisher'" v-model="editingBook[key]" :id="key" class="form-control" :placeholder="'Enter ' + key" required />
                   
-                  
+                  <!-- Selector para Author en edición -->
                   <select v-if="key === 'author'" v-model="editingBook[key]" :id="key" class="form-select" required>
                     <option v-for="author in authors" :key="author._id" :value="author._id">{{ author.name }}</option>
                   </select>
@@ -111,7 +111,6 @@
     </div>
   </div>
 </template>
-
 
 <script>
 export default {
@@ -156,12 +155,6 @@ export default {
       } else {
         console.error('Error fetching publishers.');
       }
-
-    
-      this.books.forEach(book => {
-        book.authorName = this.getAuthorName(book.author);
-        book.publisherName = this.getPublisherName(book.publisher);
-      });
     } catch (error) {
       console.error('Error fetching data:', error);
     }
@@ -246,7 +239,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-/* Aquí puedes agregar tus estilos personalizados si es necesario */
-</style>
