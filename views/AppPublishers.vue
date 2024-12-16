@@ -26,7 +26,7 @@
             <td>{{ publisher.country }}</td>
             <td>{{ publisher.founded_year }}</td>
             <td class="action-buttons">
-              <button class="btn btn-warning btn-sm" @click="editPublisher(publisher)">Edit</button>
+              <button class="btn btn-warning btn-sm me-2" @click="editPublisher(publisher)">Edit</button>
               <button class="btn btn-danger btn-sm" @click="deletePublisher(publisher)">Delete</button>
             </td>
           </tr>
@@ -112,10 +112,10 @@
 export default {
   data() {
     return {
-      publishers: [], // List of publishers
-      newPublisher: { name: '', country: '', founded_year: null }, // For the create form
-      editingPublisher: null, // For the edit form
-      showTab: 'table', // Can be 'table', 'create', or 'edit'
+      publishers: [], 
+      newPublisher: { name: '', country: '', founded_year: null }, 
+      editingPublisher: null, 
+      showTab: 'table', 
     };
   },
   async created() {

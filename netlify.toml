@@ -1,2 +1,8 @@
 [build]
-  functions = "netlify/functions"
+  publish = "dist"  # Carpeta donde se construye la app de Vue
+  functions = "netlify/functions"  # Carpeta donde están las funciones
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

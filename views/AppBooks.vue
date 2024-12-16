@@ -32,10 +32,11 @@
             <td>{{ book.copyright }}</td>
             <td>{{ book.language }}</td>
             <td>{{ book.pages }}</td>
-            <td>{{ book.author }}</td>
-            <td>{{ book.publisher }}</td>
+            <td>{{ getAuthorName(book.author) }}</td>
+            <td>{{ getPublisherName(book.publisher) }}</td>
+
             <td class="action-buttons">
-              <button class="btn btn-warning btn-sm" @click="editBook(book)">Edit</button>
+              <button class="btn btn-warning btn-sm me-2" @click="editBook(book)">Edit</button>
               <button class="btn btn-danger btn-sm" @click="deleteBook(book)">Delete</button>
             </td>
           </tr>
@@ -53,7 +54,17 @@
               <div v-for="(value, key) in newBook" :key="key" class="mb-3 row">
                 <label :for="key" class="col-sm-2 col-form-label">{{ key }}</label>
                 <div class="col-sm-7">
-                  <input v-model="newBook[key]" :id="key" class="form-control" :placeholder="'Enter ' + key" required />
+                  <input v-if="key !== 'author' && key !== 'publisher'" v-model="newBook[key]" :id="key" class="form-control" :placeholder="'Enter ' + key" required />
+                  
+                  <!-- Selector para Author -->
+                  <select v-if="key === 'author'" v-model="newBook[key]" :id="key" class="form-select" required>
+                    <option v-for="author in authors" :key="author._id" :value="author._id">{{ author.name }}</option>
+                  </select>
+                  
+                  <!-- Selector para Publisher -->
+                  <select v-if="key === 'publisher'" v-model="newBook[key]" :id="key" class="form-select" required>
+                    <option v-for="publisher in publishers" :key="publisher._id" :value="publisher._id">{{ publisher.name }}</option>
+                  </select>
                 </div>
               </div>
               <div class="d-flex">
@@ -76,9 +87,17 @@
               <div v-for="(value, key) in editingBook" :key="key" class="mb-3 row">
                 <label :for="key" class="col-sm-2 col-form-label">{{ key }}</label>
                 <div class="col-sm-7">
-                  <input v-if="key !== '_id'" v-model="editingBook[key]" :id="key" class="form-control"
-                    :placeholder="'Enter ' + key" required />
-                  <input v-else disabled v-model="editingBook[key]" :id="key" class="form-control" />
+                  <input v-if="key !== '_id' && key !== 'author' && key !== 'publisher'" v-model="editingBook[key]" :id="key" class="form-control" :placeholder="'Enter ' + key" required />
+                  
+                  
+                  <select v-if="key === 'author'" v-model="editingBook[key]" :id="key" class="form-select" required>
+                    <option v-for="author in authors" :key="author._id" :value="author._id">{{ author.name }}</option>
+                  </select>
+                  
+                  <!-- Selector para Publisher en edición -->
+                  <select v-if="key === 'publisher'" v-model="editingBook[key]" :id="key" class="form-select" required>
+                    <option v-for="publisher in publishers" :key="publisher._id" :value="publisher._id">{{ publisher.name }}</option>
+                  </select>
                 </div>
               </div>
               <div class="d-flex justify-content-between">
@@ -93,32 +112,14 @@
   </div>
 </template>
 
-<style scoped>
-
-body {
-  height: 100vh; 
-  overflow-y: auto; 
-  margin: 0; 
-  font-family: Arial, sans-serif; 
-}
-
-.container {
-  height: 100%; 
-  display: flex;
-  flex-direction: column;
-}
-
-table {
-  width: 100%;
-  margin-bottom: 20px;
-}
-</style>
 
 <script>
 export default {
   data() {
     return {
       books: [],
+      authors: [],
+      publishers: [],
       newBook: {
         title: '',
         edition: '',
@@ -133,14 +134,48 @@ export default {
     };
   },
   async mounted() {
-    const response = await fetch('/.netlify/functions/bookFindAll');
-    if (response.ok) {
-      this.books = await response.json();
-    } else {
-      console.error('Error fetching books.');
+    try {
+      const booksResponse = await fetch('/.netlify/functions/bookFindAll');
+      const authorsResponse = await fetch('/.netlify/functions/authorFindAll');
+      const publishersResponse = await fetch('/.netlify/functions/publishersAll');
+      
+      if (booksResponse.ok) {
+        this.books = await booksResponse.json();
+      } else {
+        console.error('Error fetching books.');
+      }
+
+      if (authorsResponse.ok) {
+        this.authors = await authorsResponse.json();
+      } else {
+        console.error('Error fetching authors.');
+      }
+
+      if (publishersResponse.ok) {
+        this.publishers = await publishersResponse.json();
+      } else {
+        console.error('Error fetching publishers.');
+      }
+
+    
+      this.books.forEach(book => {
+        book.authorName = this.getAuthorName(book.author);
+        book.publisherName = this.getPublisherName(book.publisher);
+      });
+    } catch (error) {
+      console.error('Error fetching data:', error);
     }
   },
+
   methods: {
+    getAuthorName(authorId) {
+      const author = this.authors.find(a => a._id === authorId);
+      return author ? author.name : 'Unknown';
+    },
+    getPublisherName(publisherId) {
+      const publisher = this.publishers.find(p => p._id === publisherId);
+      return publisher ? publisher.name : 'Unknown';
+    },
     showCreateForm() {
       this.showTab = 'create';
     },
@@ -211,4 +246,7 @@ export default {
   },
 };
 </script>
-                                 
+
+<style scoped>
+/* Aquí puedes agregar tus estilos personalizados si es necesario */
+</style>

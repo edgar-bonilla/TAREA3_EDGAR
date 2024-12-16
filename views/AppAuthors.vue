@@ -29,7 +29,7 @@
             <td>{{ author.birth_year }}</td>
             <td>{{ author.fields ? author.fields.join(', ') : '' }}</td>
             <td class="action-buttons">
-              <button class="btn btn-warning btn-sm" @click="editAuthor(author)">Edit</button>
+              <button class="btn btn-warning btn-sm me-2" @click="editAuthor(author)">Edit</button>
               <button class="btn btn-danger btn-sm" @click="deleteAuthor(author)">Delete</button>
             </td>
           </tr>

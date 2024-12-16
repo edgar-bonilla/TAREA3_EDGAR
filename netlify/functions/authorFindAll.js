@@ -11,16 +11,14 @@ exports.handler = async (event, context) => {
   try {
     const client = await clientPromise;
     const db = client.db("bookstore");
-    const collection = db.collection("authors");  // Cambié a "authors" en lugar de "books"
+    const collection = db.collection("authors");  
 
     if (event.httpMethod === "GET") {
-      // Obtener todos los autores
       const authors = await collection.find({}).toArray();
       return { statusCode: 200, headers, body: JSON.stringify(authors) };
     }
 
     if (event.httpMethod === "POST") {
-      // Crear un nuevo autor
       const newAuthor = JSON.parse(event.body);
       const result = await collection.insertOne(newAuthor);
       return { 
@@ -31,7 +29,6 @@ exports.handler = async (event, context) => {
     }
 
     if (event.httpMethod === "PUT") {
-      // Actualizar un autor
       const { id } = event.queryStringParameters;
       const updatedAuthor = JSON.parse(event.body);
       const result = await collection.updateOne(
@@ -45,7 +42,6 @@ exports.handler = async (event, context) => {
     }
 
     if (event.httpMethod === "DELETE") {
-      // Eliminar un autor
       const { id } = event.queryStringParameters;
       const result = await collection.deleteOne({ _id: new require('mongodb').ObjectId(id) });
       if (result.deletedCount === 0) {
