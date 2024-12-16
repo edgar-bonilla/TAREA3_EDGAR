@@ -1,31 +1,19 @@
 <template>
-  <footer class="app-footer">
-    <nav>
-      <a href="/books">Books</a> |
-      <a href="/authors">Authors</a> |
-      <a href="/publishers">Publishers</a>
+  <div class="container">  <header class="bg-dark text-white text-end py-2 fixed-top">
+    <nav class="d-flex justify-content-between w-100 px-3">
+      <!-- Enlace de Inicio al principio -->
+      <a href="/" class="text-white fs-3 text-decoration-none">Inicio</a>
+
+      <!-- Enlaces al centro -->
+      <div class="d-flex">
+        <a href="/books" class="text-white mx-3 fs-3 text-decoration-none">Books</a>
+        <a href="/authors" class="text-white mx-3 fs-3 text-decoration-none">Authors</a>
+        <a href="/publishers" class="text-white mx-3 fs-3 text-decoration-none">Publishers</a>
+      </div>
+
+   
     </nav>
-  </footer>
+  </header> 
+</div>
+
 </template>
-
-<style scoped>
-.app-footer {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  background-color: #333;
-  color: white;
-  text-align: center;
-  padding: 1rem 0;
-  font-size: 18px;
-  z-index: 1000;
-}
-
-nav a {
-  color: white;
-  margin: 0 1rem;
-  text-decoration: none;
-  font-size: 38px;
-}
-</style>
