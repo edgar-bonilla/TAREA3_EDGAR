@@ -5,8 +5,8 @@ import Authors from '../views/AppAuthors.vue';
 import Publishers from '../views/AppPublishers.vue';
 
 const routes = [
-  { path: '/', redirect: '/home' }, // Redirecciona a HomePage
-  { path: '/home', component: HomePage }, // Nueva ruta para HomePage
+  { path: '/', redirect: '/home' }, 
+  { path: '/home', component: HomePage }, 
   { path: '/books', component: Books },
   { path: '/authors', component: Authors },
   { path: '/publishers', component: Publishers },
