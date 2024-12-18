@@ -179,7 +179,7 @@ export default {
     },
     async updateAuthor() {
       this.editingAuthor.fields = (this.editingAuthor.fields || '').split(',').map(field => field.trim());  // Parsear campos
-
+//hhhhhhhhhh
       const response = await fetch(`${this.$url}/.netlify/functions/authorUpdate/${this.editingAuthor._id}`, {
         method: 'PUT',
         headers: {
