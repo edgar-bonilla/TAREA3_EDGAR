@@ -3,7 +3,6 @@
     <br><br><br>
     <h1 class="title mb-4">Authors</h1>
 
- 
     <div class="d-flex justify-content-end mb-4">
       <button class="btn btn-success" @click="showCreateForm">Create Author</button>
     </div>
@@ -141,8 +140,7 @@ export default {
   async mounted() {
     try {
       const response = await axios.get(`${this.$url}/.netlify/functions/authorFindAll`);
-      
-      this.authors = await response.json();
+      this.authors = response.data;  // Usar response.data, no .json()
     } catch (error) {
       console.error("Error fetching authors:", error);
     }
@@ -155,8 +153,7 @@ export default {
       this.showTab = 'table';
     },
     async createAuthor() {
-      // Parse fields from the input string
-      
+      // Parsear los campos
       this.newAuthor.fields = this.newAuthor.fields.split(',').map(field => field.trim());
       
       const response = await fetch(`${this.$url}/.netlify/functions/authorsInsert`, {
@@ -181,32 +178,23 @@ export default {
       this.editingAuthor = null;
     },
     async updateAuthor() {
+      this.editingAuthor.fields = (this.editingAuthor.fields || '').split(',').map(field => field.trim());  // Parsear campos
 
-  if (Array.isArray(this.editingAuthor.fields)) {
-                      
-    this.editingAuthor.fields = this.editingAuthor.fields.join(', ');
-  }
+      const response = await fetch(`${this.$url}/.netlify/functions/authorUpdate/${this.editingAuthor._id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(this.editingAuthor),
+      });
 
-  
-this.editingAuthor.fields = (this.editingAuthor.fields || '').split(',').map(field => field.trim());  // Para el formulario de edición
-
-
-  const response = await fetch(`${this.$url}/.netlify/functions/authorUpdate/${this.editingAuthor.id}`, {
-    method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json',
+      const updatedAuthor = await response.json();
+      const index = this.authors.findIndex(author => author._id === updatedAuthor._id);
+      if (index !== -1) {
+        this.authors[index] = updatedAuthor;
+      }
+      this.cancelEdit();
     },
-    body: JSON.stringify(this.editingAuthor),
-  });
-
-  const updatedAuthor = await response.json();
-  const index = this.authors.findIndex(author => author.id === updatedAuthor.id);
-  if (index !== -1) {
-    this.authors[index] = updatedAuthor;
-  }
-  this.cancelEdit();
-},
-
     async deleteAuthor(author) {
       const response = await fetch(`${this.$url}/.netlify/functions/authorsDelete/${author._id}`, {
         method: 'DELETE',
