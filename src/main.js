@@ -5,6 +5,6 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 const app = createApp(App);
 
 
-app.config.globalProperties.$url =  process.env.VUE_APP_BASE_URL || 'http://localhost:8888';
+app.config.globalProperties.$url =  process.env.VUE_APP_BASE_URL;
 
 app.use(router).mount('#app');
