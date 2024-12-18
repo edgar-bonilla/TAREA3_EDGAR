@@ -3,7 +3,6 @@
     <br><br><br>
     <h1 class="title mb-4">Authors</h1>
 
- 
     <div class="d-flex justify-content-end mb-4">
       <button class="btn btn-success" @click="showCreateForm">Create Author</button>
     </div>
@@ -127,6 +126,8 @@
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
   data() {
     return {
@@ -138,9 +139,8 @@ export default {
   },
   async mounted() {
     try {
-   
-      const response = await fetch(`${this.$url}/.netlify/functions/authorFindAll`); 
-      this.authors = await response.json();
+      const response = await axios.get(`${this.$url}/.netlify/functions/authorFindAll`);
+      this.authors = response.data;
     } catch (error) {
       console.error("Error fetching authors:", error);
     }
@@ -153,22 +153,16 @@ export default {
       this.showTab = 'table';
     },
     async createAuthor() {
-      // Parse fields from the input string
-      
       this.newAuthor.fields = this.newAuthor.fields.split(',').map(field => field.trim());
-      
-      const response = await fetch(`${this.$url}/.netlify/functions/authorsInsert`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(this.newAuthor),
-      });
 
-      const newAuthor = await response.json();
-      this.authors.push(newAuthor);
-      this.newAuthor = { name: '', nationality: '', birth_year: null, fields: '' };
-      this.showTab = 'table';
+      try {
+        const response = await axios.post(`${this.$url}/.netlify/functions/authorsInsert`, this.newAuthor);
+        this.authors.push(response.data);
+        this.newAuthor = { name: '', nationality: '', birth_year: null, fields: '' };
+        this.showTab = 'table';
+      } catch (error) {
+        console.error("Error creating author:", error);
+      }
     },
     async editAuthor(author) {
       this.editingAuthor = { ...author };
@@ -179,41 +173,30 @@ export default {
       this.editingAuthor = null;
     },
     async updateAuthor() {
+      this.editingAuthor.fields = (this.editingAuthor.fields || '').split(',').map(field => field.trim());
 
-  if (Array.isArray(this.editingAuthor.fields)) {
-                      
-    this.editingAuthor.fields = this.editingAuthor.fields.join(', ');
-  }
-
-  
-this.editingAuthor.fields = (this.editingAuthor.fields || '').split(',').map(field => field.trim());  // Para el formulario de edición
-
-
-  const response = await fetch(`${this.$url}/.netlify/functions/authorUpdate/${this.editingAuthor.id}`, {
-    method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json',
+      try {
+        const response = await axios.put(`${this.$url}/.netlify/functions/authorUpdate/${this.editingAuthor.id}`, this.editingAuthor);
+        const updatedAuthor = response.data;
+        const index = this.authors.findIndex(author => author.id === updatedAuthor.id);
+        if (index !== -1) {
+          this.authors[index] = updatedAuthor;
+        }
+        this.cancelEdit();
+      } catch (error) {
+        console.error("Error updating author:", error);
+      }
     },
-    body: JSON.stringify(this.editingAuthor),
-  });
-
-  const updatedAuthor = await response.json();
-  const index = this.authors.findIndex(author => author.id === updatedAuthor.id);
-  if (index !== -1) {
-    this.authors[index] = updatedAuthor;
-  }
-  this.cancelEdit();
-},
-
     async deleteAuthor(author) {
-      const response = await fetch(`${this.$url}/.netlify/functions/authorsDelete/${author._id}`, {
-        method: 'DELETE',
-      });
-
-      if (response.ok) {
-        this.authors = this.authors.filter(a => a._id !== author._id);
-      } else {
-        console.error('Error deleting author');
+      try {
+        const response = await axios.delete(`${this.$url}/.netlify/functions/authorsDelete/${author._id}`);
+        if (response.status === 200) {
+          this.authors = this.authors.filter(a => a._id !== author._id);
+        } else {
+          console.error('Error deleting author');
+        }
+      } catch (error) {
+        console.error("Error deleting author:", error);
       }
     },
   },
