@@ -131,16 +131,16 @@ import axios from 'axios';
 export default {
   data() {
     return {
-      authors: [],
-      newAuthor: { name: '', nationality: '', birth_year: null, fields: '' },
-      editingAuthor: null,
-      showTab: 'table',
+      authors: [], 
+      newAuthor: { name: '', nationality: '', birth_year: null, fields: '' }, 
+      editingAuthor: null, 
+      showTab: 'table', 
     };
   },
   async mounted() {
     try {
       const response = await axios.get(`${this.$url}/.netlify/functions/authorFindAll`);
-      this.authors = response.data;
+      this.authors = response.data;  // Usar response.data, no .json()
     } catch (error) {
       console.error("Error fetching authors:", error);
     }
@@ -153,16 +153,21 @@ export default {
       this.showTab = 'table';
     },
     async createAuthor() {
+      // Parsear los campos
       this.newAuthor.fields = this.newAuthor.fields.split(',').map(field => field.trim());
+      
+      const response = await fetch(`${this.$url}/.netlify/functions/authorsInsert`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(this.newAuthor),
+      });
 
-      try {
-        const response = await axios.post(`${this.$url}/.netlify/functions/authorsInsert`, this.newAuthor);
-        this.authors.push(response.data);
-        this.newAuthor = { name: '', nationality: '', birth_year: null, fields: '' };
-        this.showTab = 'table';
-      } catch (error) {
-        console.error("Error creating author:", error);
-      }
+      const newAuthor = await response.json();
+      this.authors.push(newAuthor);
+      this.newAuthor = { name: '', nationality: '', birth_year: null, fields: '' };
+      this.showTab = 'table';
     },
     async editAuthor(author) {
       this.editingAuthor = { ...author };
@@ -173,27 +178,32 @@ export default {
       this.editingAuthor = null;
     },
     async updateAuthor() {
-      this.editingAuthor.fields = (this.editingAuthor.fields || '').split(',').map(field => field.trim());
+      this.editingAuthor.fields = (this.editingAuthor.fields || '').split(',').map(field => field.trim());  // Parsear campos
 
-      try {
-        const response = await axios.put(`${this.$url}/.netlify/functions/authorUpdate/${this.editingAuthor.id}`, this.editingAuthor);
-        const index = this.authors.findIndex(author => author.id === response.data.id);
-        if (index !== -1) {
-          this.authors[index] = response.data;
-        }
-        this.cancelEdit();
-      } catch (error) {
-        console.error("Error updating author:", error);
+      const response = await fetch(`${this.$url}/.netlify/functions/authorUpdate/${this.editingAuthor._id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(this.editingAuthor),
+      });
+
+      const updatedAuthor = await response.json();
+      const index = this.authors.findIndex(author => author._id === updatedAuthor._id);
+      if (index !== -1) {
+        this.authors[index] = updatedAuthor;
       }
+      this.cancelEdit();
     },
     async deleteAuthor(author) {
-      try {
-        const response = await axios.delete(`${this.$url}/.netlify/functions/authorsDelete/${author._id}`);
-        if (response.status === 200) {
-          this.authors = this.authors.filter(a => a._id !== author._id);
-        }
-      } catch (error) {
-        console.error("Error deleting author:", error);
+      const response = await fetch(`${this.$url}/.netlify/functions/authorsDelete/${author._id}`, {
+        method: 'DELETE',
+      });
+
+      if (response.ok) {
+        this.authors = this.authors.filter(a => a._id !== author._id);
+      } else {
+        console.error('Error deleting author');
       }
     },
   },
